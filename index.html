@@ -3,75 +3,73 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PromptPix - AI Prompt Gallery</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PromptPix</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#0d1020;color:#fff;font-family:Arial,sans-serif}
-header{padding:22px 6%;background:#151a30;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-.logo{font-size:27px;font-weight:bold;color:#9c8cff}
-button{border:0;border-radius:9px;padding:11px 16px;background:#7865ee;color:white;font-weight:bold;cursor:pointer}
-button:hover{opacity:.85}
-main{max-width:1100px;margin:auto;padding:25px 18px}
-.hero{text-align:center;padding:35px 10px}
-.hero h1{font-size:38px;margin-bottom:10px}
-.hero p{color:#b9bdd0}
-input,textarea,select{width:100%;padding:13px;margin:8px 0;border:1px solid #343b59;border-radius:9px;background:#171d34;color:white}
-textarea{min-height:110px;resize:vertical}
-.search{max-width:600px;margin:15px auto}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:25px}
-.card{background:#191f37;border:1px solid #303753;border-radius:14px;overflow:hidden}
-.card img{width:100%;height:190px;object-fit:cover;background:#242b45}
-.content{padding:16px}
-.content h3{margin:0 0 10px}
-.category{color:#a99cff;font-size:13px}
-.prompt{color:#d6d9e8;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
-.copy{width:100%;margin-top:12px}
-.panel{background:#191f37;padding:20px;border-radius:14px;margin:25px 0;border:1px solid #343b59}
+body{margin:0;background:#0d1020;color:white;font-family:Arial}
+header{padding:20px;background:#171d34;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:26px;color:#a99aff;font-weight:bold}
+main{max-width:1100px;margin:auto;padding:22px}
+button{background:#7865ee;color:white;border:0;padding:12px 17px;border-radius:9px;cursor:pointer;font-weight:bold}
+input,textarea,select{width:100%;padding:13px;margin:8px 0;background:#171d34;color:white;border:1px solid #414968;border-radius:9px}
+textarea{min-height:110px}
+.panel{background:#191f37;padding:18px;border-radius:12px;margin:20px 0}
 .hidden{display:none}
-.status{color:#a99cff;margin:10px 0}
-footer{text-align:center;padding:30px;color:#9299b3}
+.hero{text-align:center;padding:30px 0}
+.hero h1{font-size:36px}
+.search{max-width:600px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.card{background:#191f37;border-radius:12px;overflow:hidden}
+.card img{width:100%;height:190px;object-fit:cover}
+.content{padding:15px}
+.prompt{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
+.copy{width:100%;margin-top:12px}
+.category{color:#a99aff;font-size:13px}
+.status{color:#b8b0ff}
+footer{text-align:center;padding:30px;color:#aaa}
 </style>
 </head>
 <body>
 <header>
-  <div class="logo">✦ PromptPix</div>
-  <button id="loginToggle">Admin Login</button>
+<div class="logo">✦ PromptPix</div>
+<button id="loginToggle">Admin Login</button>
 </header>
 
 <main>
 <section class="hero">
-  <h1>Discover Amazing AI Prompts</h1>
-  <p>Explore, copy and create with powerful AI prompts.</p>
-  <input class="search" id="search" placeholder="Search prompts...">
+<h1>Discover Amazing AI Prompts</h1>
+<p>Explore, copy and create with AI prompts.</p>
+<input class="search" id="search" placeholder="Search prompts...">
 </section>
 
-<section id="loginPanel" class="panel hidden">
-  <h2>Admin Login</h2>
-  <input id="email" type="email" placeholder="Admin email">
-  <input id="password" type="password" placeholder="Password">
-  <button id="loginBtn">Login</button>
-  <button id="logoutBtn" class="hidden">Logout</button>
-  <p class="status" id="loginStatus"></p>
+<section class="panel hidden" id="loginPanel">
+<h2>Admin Login</h2>
+<input id="email" type="email" placeholder="Admin email">
+<input id="password" type="password" placeholder="Password">
+<button id="loginBtn">Login</button>
+<button id="logoutBtn" class="hidden">Logout</button>
+<p class="status" id="loginStatus"></p>
 </section>
 
-<section id="uploadPanel" class="panel hidden">
-  <h2>Upload New Prompt</h2>
-  <input id="title" placeholder="Prompt title">
-  <select id="category">
-    <option>General</option>
-    <option>Photography</option>
-    <option>Art</option>
-    <option>Anime</option>
-    <option>3D</option>
-    <option>Logo</option>
-    <option>Other</option>
-  </select>
-  <input id="image" type="file" accept="image/*">
-  <textarea id="prompt" placeholder="Write your AI prompt here..."></textarea>
-  <button id="uploadBtn">Upload Prompt</button>
-  <p class="status" id="uploadStatus"></p>
+<section class="panel hidden" id="uploadPanel">
+<h2>Upload New Prompt</h2>
+<input id="title" placeholder="Prompt title">
+<select id="category">
+<option>General</option>
+<option>Photography</option>
+<option>Art</option>
+<option>Anime</option>
+<option>3D</option>
+<option>Logo</option>
+<option>Other</option>
+</select>
+<label>Select Image</label>
+<input id="image" type="file" accept="image/*">
+<textarea id="prompt" placeholder="Write your AI prompt here"></textarea>
+<button id="uploadBtn">Upload Prompt</button>
+<p class="status" id="uploadStatus"></p>
 </section>
 
 <h2>Latest Prompts</h2>
@@ -79,188 +77,177 @@ footer{text-align:center;padding:30px;color:#9299b3}
 <p class="status" id="pageStatus"></p>
 </main>
 
-<footer>© 2026 PromptPix · AI Prompt Gallery</footer>
+<footer>© 2026 PromptPix</footer>
 
 <script>
-const SUPABASE_URL = "https://vtivyyuykgofulnypypp.supabase.co";
-const SUPABASE_KEY = "sb_publishable_-_Ie1GcR6MBxMuFy_8iwag_3oqRQZjo";
+const URL="https://vtivyyuykgofulnypypp.supabase.co";
+const KEY="sb_publishable_-_Ie1GcR6MBxMuFy_8iwag_3oqRQZjo";
+const db=window.supabase.createClient(URL,KEY);
+const BUCKET="prompt-images";
+const $=id=>document.getElementById(id);
 
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const BUCKET = "prompt-images";
+function msg(id,text){$(id).textContent=text}
 
-const $ = id => document.getElementById(id);
-
-function status(id, message) {
-  $(id).textContent = message;
+function safe(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ })[c]);
 }
 
-function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;",
-    '"':"&quot;", "'":"&#39;"
-  })[c]);
+async function updateLogin(){
+ const {data}=await db.auth.getSession();
+ const logged=!!data.session;
+ $("uploadPanel").classList.toggle("hidden",!logged);
+ $("logoutBtn").classList.toggle("hidden",!logged);
+ $("loginBtn").classList.toggle("hidden",logged);
+ $("loginToggle").textContent=logged?"Admin Panel":"Admin Login";
 }
 
-async function showSession() {
-  const {data} = await db.auth.getSession();
-  const loggedIn = !!data.session;
-  $("uploadPanel").classList.toggle("hidden", !loggedIn);
-  $("logoutBtn").classList.toggle("hidden", !loggedIn);
-  $("loginBtn").classList.toggle("hidden", loggedIn);
-  $("loginToggle").textContent = loggedIn ? "Admin Panel" : "Admin Login";
-}
-
-$("loginToggle").onclick = () => {
-  $("loginPanel").classList.toggle("hidden");
+$("loginToggle").onclick=()=>{
+ $("loginPanel").classList.toggle("hidden");
 };
 
-$("loginBtn").onclick = async () => {
-  status("loginStatus", "Logging in...");
-  const {error} = await db.auth.signInWithPassword({
-    email: $("email").value.trim(),
-    password: $("password").value
-  });
-  if (error) {
-    status("loginStatus", error.message);
-  } else {
-    status("loginStatus", "Login successful!");
-    await showSession();
-  }
+$("loginBtn").onclick=async()=>{
+ msg("loginStatus","Logging in...");
+ const {error}=await db.auth.signInWithPassword({
+  email:$("email").value.trim(),
+  password:$("password").value
+ });
+ if(error){msg("loginStatus",error.message);return;}
+ msg("loginStatus","Login successful!");
+ await updateLogin();
 };
 
-$("logoutBtn").onclick = async () => {
-  await db.auth.signOut();
-  await showSession();
-  status("loginStatus", "Logged out.");
+$("logoutBtn").onclick=async()=>{
+ await db.auth.signOut();
+ await updateLogin();
+ msg("loginStatus","Logged out.");
 };
 
-async function loadPrompts() {
-  status("pageStatus", "Loading prompts...");
-  const {data, error} = await db
-    .from("prompts")
-    .select("*")
-    .order("created_at", {ascending:false});
+async function loadPrompts(){
+ msg("pageStatus","Loading prompts...");
+ const {data,error}=await db.from("prompts")
+  .select("*").order("created_at",{ascending:false});
 
-  if (error) {
-    status("pageStatus", "Could not load prompts: " + error.message);
-    return;
+ if(error){msg("pageStatus",error.message);return;}
+
+ $("gallery").innerHTML="";
+
+ for(const item of (data||[])){
+  let imageUrl="";
+
+  if(item.image_url){
+   const {data:signed,error:signError}=await db.storage
+    .from(BUCKET).createSignedUrl(item.image_url,3600);
+
+   if(!signError) imageUrl=signed.signedUrl;
+   else console.error("Image URL error:",signError);
   }
 
-  const list = data || [];
-  const gallery = $("gallery");
-  gallery.innerHTML = "";
+  const card=document.createElement("div");
+  card.className="card";
+  card.dataset.search=(item.title+" "+item.category+" "+item.prompt_text).toLowerCase();
 
-  for (const item of list) {
-    let imageUrl = "";
-    if (item.image_url) {
-      if (item.image_url.startsWith("http")) {
-        imageUrl = item.image_url;
-      } else {
-        const {data: signed, error: signError} = await db.storage
-          .from(BUCKET).createSignedUrl(item.image_url, 3600);
-        if (!signError) imageUrl = signed.signedUrl;
-      }
-    }
+  card.innerHTML=`
+   ${imageUrl?`<img src="${safe(imageUrl)}" alt="Prompt image">`:""}
+   <div class="content">
+    <div class="category">${safe(item.category)}</div>
+    <h3>${safe(item.title)}</h3>
+    <div class="prompt">${safe(item.prompt_text)}</div>
+    <button class="copy">Copy Prompt</button>
+   </div>`;
 
-    const card = document.createElement("article");
-    card.className = "card";
-    card.dataset.search = [
-      item.title, item.category, item.prompt_text
-    ].join(" ").toLowerCase();
+  card.querySelector(".copy").onclick=async()=>{
+   try{
+    await navigator.clipboard.writeText(item.prompt_text);
+    card.querySelector(".copy").textContent="Copied!";
+   }catch(e){alert("Copy failed");}
+  };
 
-    card.innerHTML = `
-      ${imageUrl ? `<img src="${escapeHTML(imageUrl)}" alt="Prompt image">` : ""}
-      <div class="content">
-        <div class="category">${escapeHTML(item.category || "General")}</div>
-        <h3>${escapeHTML(item.title)}</h3>
-        <div class="prompt">${escapeHTML(item.prompt_text)}</div>
-        <button class="copy">Copy Prompt</button>
-      </div>`;
+  $("gallery").appendChild(card);
+ }
 
-    card.querySelector(".copy").onclick = async () => {
-      try {
-        await navigator.clipboard.writeText(item.prompt_text);
-        card.querySelector(".copy").textContent = "Copied!";
-        setTimeout(() => {
-          card.querySelector(".copy").textContent = "Copy Prompt";
-        }, 1500);
-      } catch {
-        status("pageStatus", "Copy failed. Please try again.");
-      }
-    };
-
-    gallery.appendChild(card);
-  }
-
-  status("pageStatus", list.length ? "" : "No prompts yet. Check back soon.");
+ msg("pageStatus",data.length?"":"No prompts uploaded yet.");
 }
 
-$("search").addEventListener("input", () => {
-  const term = $("search").value.toLowerCase().trim();
-  document.querySelectorAll(".card").forEach(card => {
-    card.style.display = card.dataset.search.includes(term) ? "" : "none";
-  });
+$("search").oninput=()=>{
+ const term=$("search").value.toLowerCase();
+ document.querySelectorAll(".card").forEach(card=>{
+  card.style.display=card.dataset.search.includes(term)?"":"none";
+ });
+};
+
+$("uploadBtn").onclick=async()=>{
+ const {data:sessionData}=await db.auth.getSession();
+ if(!sessionData.session){
+  msg("uploadStatus","Please login first.");return;
+ }
+
+ const title=$("title").value.trim();
+ const promptText=$("prompt").value.trim();
+ const category=$("category").value;
+ const file=$("image").files[0];
+
+ if(!title||!promptText){
+  msg("uploadStatus","Enter title and prompt.");return;
+ }
+
+ if(!file){
+  msg("uploadStatus","Please select an image.");return;
+ }
+
+ if(!file.type.startsWith("image/")){
+  msg("uploadStatus","Please select a valid image.");return;
+ }
+
+ msg("uploadStatus","Uploading image...");
+
+ const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+ const imagePath=Date.now()+"-"+safeName;
+
+ const {data:uploaded,error:imageError}=await db.storage
+  .from(BUCKET)
+  .upload(imagePath,file,{upsert:false});
+
+ if(imageError){
+  msg("uploadStatus","Image upload error: "+imageError.message);
+  console.error(imageError);
+  return;
+ }
+
+ if(!uploaded||!uploaded.path){
+  msg("uploadStatus","Image upload did not return a file path.");
+  return;
+ }
+
+ msg("uploadStatus","Image uploaded. Saving prompt...");
+
+ const {error}=await db.from("prompts").insert({
+  title:title,
+  prompt_text:promptText,
+  category:category,
+  image_url:uploaded.path
+ });
+
+ if(error){
+  msg("uploadStatus","Prompt save error: "+error.message);
+  console.error(error);
+  return;
+ }
+
+ $("title").value="";
+ $("prompt").value="";
+ $("image").value="";
+
+ msg("uploadStatus","Prompt and image uploaded successfully!");
+ await loadPrompts();
+};
+
+db.auth.onAuthStateChange(()=>{
+ setTimeout(updateLogin,0);
 });
 
-$("uploadBtn").onclick = async () => {
-  const {data: sessionData} = await db.auth.getSession();
-  if (!sessionData.session) {
-    status("uploadStatus", "Please login first.");
-    return;
-  }
-
-  const title = $("title").value.trim();
-  const promptText = $("prompt").value.trim();
-  const category = $("category").value;
-  const file = $("image").files[0];
-
-  if (!title || !promptText) {
-    status("uploadStatus", "Please enter title and prompt.");
-    return;
-  }
-
-  status("uploadStatus", "Uploading...");
-
-  let imagePath = null;
-
-  if (file) {
-    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-    imagePath = Date.now() + "-" + safeName;
-
-    const {error: imageError} = await db.storage
-      .from(BUCKET)
-      .upload(imagePath, file, {upsert:false});
-
-    if (imageError) {
-      status("uploadStatus", "Image upload failed: " + imageError.message);
-      return;
-    }
-  }
-
-  const {error} = await db.from("prompts").insert({
-    title,
-    prompt_text: promptText,
-    category,
-    image_url: imagePath
-  });
-
-  if (error) {
-    status("uploadStatus", "Prompt save failed: " + error.message);
-    return;
-  }
-
-  $("title").value = "";
-  $("prompt").value = "";
-  $("image").value = "";
-  status("uploadStatus", "Prompt uploaded successfully!");
-  await loadPrompts();
-};
-
-db.auth.onAuthStateChange(() => {
-  setTimeout(showSession, 0);
-});
-
-showSession();
+updateLogin();
 loadPrompts();
 </script>
 </body>
