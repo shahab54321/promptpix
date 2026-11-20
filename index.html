@@ -1,20 +1,267 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PromptPix — AI Photo Prompts</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PromptPix - AI Prompt Gallery</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--bg:#080d1b;--panel:#101a2d;--panel2:#14223a;--text:#eef4ff;--muted:#9aaac5;--blue:#4c8dff;--line:#25344c}*{box-sizing:border-box}body{margin:0;background:linear-gradient(160deg,#0b1326,#070b15 70%);color:var(--text);font:15px system-ui,-apple-system,Segoe UI,Roboto,sans-serif}button,input,select,textarea{font:inherit}header{position:sticky;top:0;z-index:5;background:#0b1326eF;backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:16px max(16px,calc((100vw - 1100px)/2))}.head{display:flex;align-items:center;justify-content:space-between;gap:14px}.brand{font-size:24px;font-weight:850;letter-spacing:.3px}.brand span{color:#70a6ff}.tag{color:var(--muted);font-size:12px;margin-top:2px}.btn{border:0;border-radius:11px;padding:11px 15px;background:var(--blue);color:white;font-weight:700;cursor:pointer}.btn.secondary{background:var(--panel2);border:1px solid var(--line)}.btn:active{transform:scale(.98)}main{max-width:1100px;margin:auto;padding:22px 16px 50px}.hero{padding:22px 4px 18px}.hero h1{font-size:clamp(26px,5vw,40px);margin:0 0 8px}.hero p{margin:0;color:var(--muted)}.tools{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.search{flex:1;min-width:190px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;color:var(--text)}.chips{display:flex;gap:8px;overflow:auto;padding:4px 0 12px}.chip{white-space:nowrap;border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:30px;padding:8px 13px;cursor:pointer}.chip.active{background:#214a88;border-color:#4c8dff;color:white}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}.card{overflow:hidden;background:var(--panel);border:1px solid var(--line);border-radius:16px}.preview{height:190px;background:#17243b;display:flex;align-items:center;justify-content:center;color:#7f91ad;overflow:hidden}.preview img{width:100%;height:100%;object-fit:cover}.placeholder{font-size:40px}.cardbody{padding:14px}.meta{color:#83afff;font-size:12px;margin-bottom:6px}.card h3{font-size:17px;margin:0 0 9px}.prompt{color:#c3cee0;font-size:13px;line-height:1.5;max-height:84px;overflow:auto}.actions{display:flex;gap:8px;margin-top:12px}.actions button{flex:1;padding:9px;border-radius:9px}.fav{max-width:46px}.empty{text-align:center;padding:50px 10px;color:var(--muted)}footer{text-align:center;color:var(--muted);padding:25px;border-top:1px solid var(--line);font-size:12px}dialog{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:18px;width:min(560px,calc(100% - 24px));padding:0}dialog::backdrop{background:#0009;backdrop-filter:blur(3px)}.modalhead{padding:18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.modalhead h2{margin:0;font-size:19px}.modalform{padding:18px;display:grid;gap:12px}.modalform label{display:grid;gap:6px;color:var(--muted);font-size:13px}.modalform input,.modalform select,.modalform textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:#0a1324;color:var(--text);padding:11px}.modalform textarea{min-height:100px;resize:vertical}.formbuttons{display:flex;gap:9px;justify-content:flex-end}.smallnote{font-size:12px;color:var(--muted)}@media(max-width:500px){.head{align-items:flex-start}.brand{font-size:21px}.head .btn{padding:10px 11px}.preview{height:165px}}
-</style></head>
+*{box-sizing:border-box}
+body{margin:0;background:#0d1020;color:#fff;font-family:Arial,sans-serif}
+header{padding:22px 6%;background:#151a30;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.logo{font-size:27px;font-weight:bold;color:#9c8cff}
+button{border:0;border-radius:9px;padding:11px 16px;background:#7865ee;color:white;font-weight:bold;cursor:pointer}
+button:hover{opacity:.85}
+main{max-width:1100px;margin:auto;padding:25px 18px}
+.hero{text-align:center;padding:35px 10px}
+.hero h1{font-size:38px;margin-bottom:10px}
+.hero p{color:#b9bdd0}
+input,textarea,select{width:100%;padding:13px;margin:8px 0;border:1px solid #343b59;border-radius:9px;background:#171d34;color:white}
+textarea{min-height:110px;resize:vertical}
+.search{max-width:600px;margin:15px auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:25px}
+.card{background:#191f37;border:1px solid #303753;border-radius:14px;overflow:hidden}
+.card img{width:100%;height:190px;object-fit:cover;background:#242b45}
+.content{padding:16px}
+.content h3{margin:0 0 10px}
+.category{color:#a99cff;font-size:13px}
+.prompt{color:#d6d9e8;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
+.copy{width:100%;margin-top:12px}
+.panel{background:#191f37;padding:20px;border-radius:14px;margin:25px 0;border:1px solid #343b59}
+.hidden{display:none}
+.status{color:#a99cff;margin:10px 0}
+footer{text-align:center;padding:30px;color:#9299b3}
+</style>
+</head>
 <body>
-<header><div class="head"><div><div class="brand">Prompt<span>Pix</span> ✦</div><div class="tag">AI photo editing prompts, ready to copy</div></div><button class="btn" id="addBtn">＋ Upload Prompt</button></div></header>
-<main><section class="hero"><h1>Discover your next photo style ✨</h1><p>Explore prompts, copy them, and create amazing AI edits.</p></section>
-<div class="tools"><input class="search" id="search" placeholder="🔎 Search prompts…"><button class="btn secondary" id="favOnly">♡ Favorites</button></div><div class="chips" id="chips"></div><section class="grid" id="grid"></section><div class="empty" id="empty" hidden>No prompts found. Add your first prompt!</div></main>
-<footer>PromptPix · Prompt inspiration for your AI edits</footer>
-<dialog id="modal"><div class="modalhead"><h2>Add a Prompt</h2><button class="btn secondary" id="closeBtn">✕</button></div><form class="modalform" id="form"><label>Prompt title<input id="title" placeholder="e.g. Soft Blue Glow" required></label><label>Category<select id="category"><option>DSLR</option><option>Glow</option><option>Cinematic</option><option>Nature</option><option>Portrait</option><option>Islamic</option><option>Other</option></select></label><label>AI prompt<textarea id="promptText" placeholder="Paste your photo editing prompt here…" required></textarea></label><label>Image (optional)<input type="file" id="imageFile" accept="image/*"></label><div class="smallnote">Saved on this browser/device for this demo.</div><div class="formbuttons"><button type="button" class="btn secondary" id="cancelBtn">Cancel</button><button class="btn" type="submit">Save Prompt</button></div></form></dialog>
+<header>
+  <div class="logo">✦ PromptPix</div>
+  <button id="loginToggle">Admin Login</button>
+</header>
+
+<main>
+<section class="hero">
+  <h1>Discover Amazing AI Prompts</h1>
+  <p>Explore, copy and create with powerful AI prompts.</p>
+  <input class="search" id="search" placeholder="Search prompts...">
+</section>
+
+<section id="loginPanel" class="panel hidden">
+  <h2>Admin Login</h2>
+  <input id="email" type="email" placeholder="Admin email">
+  <input id="password" type="password" placeholder="Password">
+  <button id="loginBtn">Login</button>
+  <button id="logoutBtn" class="hidden">Logout</button>
+  <p class="status" id="loginStatus"></p>
+</section>
+
+<section id="uploadPanel" class="panel hidden">
+  <h2>Upload New Prompt</h2>
+  <input id="title" placeholder="Prompt title">
+  <select id="category">
+    <option>General</option>
+    <option>Photography</option>
+    <option>Art</option>
+    <option>Anime</option>
+    <option>3D</option>
+    <option>Logo</option>
+    <option>Other</option>
+  </select>
+  <input id="image" type="file" accept="image/*">
+  <textarea id="prompt" placeholder="Write your AI prompt here..."></textarea>
+  <button id="uploadBtn">Upload Prompt</button>
+  <p class="status" id="uploadStatus"></p>
+</section>
+
+<h2>Latest Prompts</h2>
+<div class="grid" id="gallery"></div>
+<p class="status" id="pageStatus"></p>
+</main>
+
+<footer>© 2026 PromptPix · AI Prompt Gallery</footer>
+
 <script>
-const starter=[{id:'s1',title:'Soft Blue Glow',category:'Glow',prompt:'Enhance the photo with a soft blue cinematic glow, gentle cool highlights, natural skin texture, balanced contrast, and a clean professional look. Preserve the subject identity and original details.',emoji:'🌌'},{id:'s2',title:'DSLR Portrait',category:'DSLR',prompt:'Transform this photo into a professional DSLR portrait. Use crisp natural details, realistic skin texture, soft background blur, flattering light, and subtle color grading. Keep the face and identity unchanged.',emoji:'📷'},{id:'s3',title:'Golden Hour',category:'Nature',prompt:'Create a warm golden-hour atmosphere with soft sunlight, natural shadows, rich but realistic colors, and a peaceful outdoor background. Keep the subject realistic and unchanged.',emoji:'🌅'},{id:'s4',title:'Cinematic Look',category:'Cinematic',prompt:'Give this image a cinematic movie-still look with moody lighting, subtle film grain, rich contrast, tasteful color grading, and realistic detail. Preserve the original subject and composition.',emoji:'🎬'}];
-let items=JSON.parse(localStorage.getItem('promptpix-items')||'null')||starter;let favorites=JSON.parse(localStorage.getItem('promptpix-favs')||'[]');let active='All',onlyFav=false;
-const grid=document.getElementById('grid'),chips=document.getElementById('chips'),empty=document.getElementById('empty');function save(){localStorage.setItem('promptpix-items',JSON.stringify(items));localStorage.setItem('promptpix-favs',JSON.stringify(favorites))}function cats(){let c=['All',...new Set(items.map(x=>x.category))];chips.innerHTML=c.map(x=>`<button class="chip ${active===x?'active':''}" data-cat="${esc(x)}">${esc(x)}</button>`).join('');chips.querySelectorAll('button').forEach(b=>b.onclick=()=>{active=b.dataset.cat;render()})}function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function render(){cats();let q=document.getElementById('search').value.toLowerCase();let list=items.filter(x=>(active==='All'||x.category===active)&&(!onlyFav||favorites.includes(x.id))&&(x.title.toLowerCase().includes(q)||x.prompt.toLowerCase().includes(q)||x.category.toLowerCase().includes(q)));grid.innerHTML=list.map(x=>`<article class="card"><div class="preview">${x.image?`<img src="${x.image}" alt="${esc(x.title)}">`:`<span class="placeholder">${x.emoji||'✨'}</span>`}</div><div class="cardbody"><div class="meta">${esc(x.category)}</div><h3>${esc(x.title)}</h3><div class="prompt">${esc(x.prompt)}</div><div class="actions"><button class="btn" data-copy="${esc(x.id)}">Copy Prompt</button><button class="btn secondary fav" data-fav="${esc(x.id)}">${favorites.includes(x.id)?'♥':'♡'}</button></div></div></article>`).join('');empty.hidden=list.length>0;grid.querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{let x=items.find(z=>z.id===b.dataset.copy);try{await navigator.clipboard.writeText(x.prompt);b.textContent='Copied ✓';setTimeout(()=>b.textContent='Copy Prompt',1400)}catch(e){prompt('Copy this prompt:',x.prompt)}});grid.querySelectorAll('[data-fav]').forEach(b=>b.onclick=()=>{let id=b.dataset.fav;favorites.includes(id)?favorites=favorites.filter(a=>a!==id):favorites.push(id);save();render()})}
-document.getElementById('search').addEventListener('input',render);document.getElementById('favOnly').onclick=()=>{onlyFav=!onlyFav;document.getElementById('favOnly').textContent=onlyFav?'♥ Favorites':'♡ Favorites';render()};const modal=document.getElementById('modal');document.getElementById('addBtn').onclick=()=>modal.showModal();['closeBtn','cancelBtn'].forEach(id=>document.getElementById(id).onclick=()=>modal.close());document.getElementById('form').onsubmit=async e=>{e.preventDefault();let image='';let file=document.getElementById('imageFile').files[0];if(file){image=await new Promise((res,rej)=>{let r=new FileReader;r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)})}items.unshift({id:'p'+Date.now(),title:document.getElementById('title').value.trim(),category:document.getElementById('category').value,prompt:document.getElementById('promptText').value.trim(),image,emoji:'✨'});save();render();e.target.reset();modal.close()};render();
-</script></body></html>
+const SUPABASE_URL = "https://vtivyyuykgofulnypypp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_-_Ie1GcR6MBxMuFy_8iwag_3oqRQZjo";
+
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const BUCKET = "prompt-images";
+
+const $ = id => document.getElementById(id);
+
+function status(id, message) {
+  $(id).textContent = message;
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;",
+    '"':"&quot;", "'":"&#39;"
+  })[c]);
+}
+
+async function showSession() {
+  const {data} = await db.auth.getSession();
+  const loggedIn = !!data.session;
+  $("uploadPanel").classList.toggle("hidden", !loggedIn);
+  $("logoutBtn").classList.toggle("hidden", !loggedIn);
+  $("loginBtn").classList.toggle("hidden", loggedIn);
+  $("loginToggle").textContent = loggedIn ? "Admin Panel" : "Admin Login";
+}
+
+$("loginToggle").onclick = () => {
+  $("loginPanel").classList.toggle("hidden");
+};
+
+$("loginBtn").onclick = async () => {
+  status("loginStatus", "Logging in...");
+  const {error} = await db.auth.signInWithPassword({
+    email: $("email").value.trim(),
+    password: $("password").value
+  });
+  if (error) {
+    status("loginStatus", error.message);
+  } else {
+    status("loginStatus", "Login successful!");
+    await showSession();
+  }
+};
+
+$("logoutBtn").onclick = async () => {
+  await db.auth.signOut();
+  await showSession();
+  status("loginStatus", "Logged out.");
+};
+
+async function loadPrompts() {
+  status("pageStatus", "Loading prompts...");
+  const {data, error} = await db
+    .from("prompts")
+    .select("*")
+    .order("created_at", {ascending:false});
+
+  if (error) {
+    status("pageStatus", "Could not load prompts: " + error.message);
+    return;
+  }
+
+  const list = data || [];
+  const gallery = $("gallery");
+  gallery.innerHTML = "";
+
+  for (const item of list) {
+    let imageUrl = "";
+    if (item.image_url) {
+      if (item.image_url.startsWith("http")) {
+        imageUrl = item.image_url;
+      } else {
+        const {data: signed, error: signError} = await db.storage
+          .from(BUCKET).createSignedUrl(item.image_url, 3600);
+        if (!signError) imageUrl = signed.signedUrl;
+      }
+    }
+
+    const card = document.createElement("article");
+    card.className = "card";
+    card.dataset.search = [
+      item.title, item.category, item.prompt_text
+    ].join(" ").toLowerCase();
+
+    card.innerHTML = `
+      ${imageUrl ? `<img src="${escapeHTML(imageUrl)}" alt="Prompt image">` : ""}
+      <div class="content">
+        <div class="category">${escapeHTML(item.category || "General")}</div>
+        <h3>${escapeHTML(item.title)}</h3>
+        <div class="prompt">${escapeHTML(item.prompt_text)}</div>
+        <button class="copy">Copy Prompt</button>
+      </div>`;
+
+    card.querySelector(".copy").onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(item.prompt_text);
+        card.querySelector(".copy").textContent = "Copied!";
+        setTimeout(() => {
+          card.querySelector(".copy").textContent = "Copy Prompt";
+        }, 1500);
+      } catch {
+        status("pageStatus", "Copy failed. Please try again.");
+      }
+    };
+
+    gallery.appendChild(card);
+  }
+
+  status("pageStatus", list.length ? "" : "No prompts yet. Check back soon.");
+}
+
+$("search").addEventListener("input", () => {
+  const term = $("search").value.toLowerCase().trim();
+  document.querySelectorAll(".card").forEach(card => {
+    card.style.display = card.dataset.search.includes(term) ? "" : "none";
+  });
+});
+
+$("uploadBtn").onclick = async () => {
+  const {data: sessionData} = await db.auth.getSession();
+  if (!sessionData.session) {
+    status("uploadStatus", "Please login first.");
+    return;
+  }
+
+  const title = $("title").value.trim();
+  const promptText = $("prompt").value.trim();
+  const category = $("category").value;
+  const file = $("image").files[0];
+
+  if (!title || !promptText) {
+    status("uploadStatus", "Please enter title and prompt.");
+    return;
+  }
+
+  status("uploadStatus", "Uploading...");
+
+  let imagePath = null;
+
+  if (file) {
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    imagePath = Date.now() + "-" + safeName;
+
+    const {error: imageError} = await db.storage
+      .from(BUCKET)
+      .upload(imagePath, file, {upsert:false});
+
+    if (imageError) {
+      status("uploadStatus", "Image upload failed: " + imageError.message);
+      return;
+    }
+  }
+
+  const {error} = await db.from("prompts").insert({
+    title,
+    prompt_text: promptText,
+    category,
+    image_url: imagePath
+  });
+
+  if (error) {
+    status("uploadStatus", "Prompt save failed: " + error.message);
+    return;
+  }
+
+  $("title").value = "";
+  $("prompt").value = "";
+  $("image").value = "";
+  status("uploadStatus", "Prompt uploaded successfully!");
+  await loadPrompts();
+};
+
+db.auth.onAuthStateChange(() => {
+  setTimeout(showSession, 0);
+});
+
+showSession();
+loadPrompts();
+</script>
+</body>
+</html>
